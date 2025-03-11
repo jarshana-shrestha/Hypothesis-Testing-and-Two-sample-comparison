@@ -1,0 +1,715 @@
+---
+title: ''
+output: html_document
+---
+
+<BR>
+<BR>
+<CENTER>
+<FONT SIZE = 4, COLOR = "#A11515">
+<B>Hypothesis Testing and Two sample comparisons</B>
+<BR>
+Jarshana Shrestha
+<BR>
+6/18/2023
+</FONT></CENTER>
+<P>
+<BR>
+
+```{r message=FALSE, warning=FALSE}
+
+#libraries used
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(DT)
+library(RColorBrewer)
+library(rio)
+library(dbplyr)
+library(psych)
+library(FSA)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(DescTools)
+
+# Import the data set
+BRCA <- read_excel("Dataset/BRCA.xlsx")
+
+```
+<BR>
+
+
+<BR><B>
+<FONT SIZE = 4, COLOR = "#A11515">
+INTRODUCTION
+</FONT>
+</B>
+<BR>
+<b>
+<br>
+Hypothesis Testing:
+</b>
+<p>
+Hypothesis testing, also called significance testing, is a statistical method used to draw conclusions about a population based on sample data(Bevans, 2023). It involves formulating two hypothesis, the null hypothesis (H0) and the alternative hypothesis (Ha), and collecting data to evaluate which hypothesis is supported by the evidence. The null hypothesis represents the assumption that there is no significant difference or effect, while the alternative hypothesis suggests that there is a significant difference or effect.
+<p>
+In the healthcare industry, hypothesis testing plays a crucial role in evaluating the effectiveness of medical treatments. For example, researchers may formulate a hypothesis stating that a new drug significantly reduces symptoms compared to a placebo. In this case:
+<p>
+the null hypothesis (H0) would state that the drug does not significantly reduce symptoms compared to a placeb0. 
+<p>
+While the alternative hypothesis (Ha) would state that the drug does have a significant effect.
+<p>
+During the hypothesis testing process, researchers collect data through randomized controlled trials. They choose a suitable test statistic, to compare the mean symptom scores between the treatment and placebo groups. Then calculate P-value to determine whether to reject or not reject the null hypothesis.
+<p>
+
+<p>
+<b>
+Different Types of Test:
+</b>
+<p>
+Z Test:
+<p>
+The Z test is used when the sample size is large (typically, n > 30) and the population standard deviation is known. It is commonly used to compare the means of two independent samples. The Z test assumes that the data follows a normal distribution (Meena, 2023). This test calculates the Z statistic, which measures the difference between the means of the two samples in terms of standard deviations. By comparing the Z statistic to a critical value from the standard normal distribution, we can determine whether the difference between the means is statistically significant.
+<p>
+<p>
+T Test:
+<p>
+The T test is used when the sample size is small (typically, n < 30) or the population standard deviation is unknown. It is widely employed for comparing the means of two independent samples. The T test assumes that the data follows a normal distribution. There are two types of T tests: the independent samples T test and the paired samples T test. The independent samples T test compares the means of two unrelated groups, while the paired samples T test compares the means of two related groups (Meena, 2023). By calculating the T statistic and comparing it to the critical value from the T-distribution, we can determine if the difference between the means is statistically significant.
+<p>
+<p>
+F Test:
+<p>
+The F test is used to compare the variances of two independent samples. It is employed when we want to test whether the variability or spread of the data is significantly different between the two groups. The F test assumes that the data follows a normal distribution and that the samples are independent. The F test calculates the F statistic by dividing the variance of one sample by the variance of the other sample. By comparing the F statistic to a critical value from the F-distribution, we can determine if the difference in variances is statistically significant.
+<p>
+In summary, the Z test is used for large sample sizes with known population standard deviation, the T test is used for small sample sizes or unknown population standard deviation when comparing means, and the F test is used for comparing variances of two independent samples. These tests help researchers and analysts make statistically informed decisions when comparing different groups or populations.
+<p>
+
+<p>
+<b>
+Importance of proper referencing:
+</b>
+<p>
+Proper referencing plays a vital role in academic writing and has several important reasons. Firstly, it demonstrates respect for the intellectual contributions of other researchers and scholars whose work has influenced the writer's own ideas and arguments. By including accurate and appropriate citations, academic writers show appreciation for the original sources, fostering a culture of integrity and ethical scholarship within the academic community. Moreover, proper referencing enables readers to easily locate and access the cited sources, empowering them to verify the information presented and delve deeper into the subject matter if desired. This accessibility promotes further exploration and inquiry, nurturing intellectual discourse and the advancement of knowledge within the field. Additionally, referencing adds credibility and validity to an academic paper by showcasing the writer's engagement with relevant literature and the breadth of research undertaken. By incorporating supporting evidence from reputable sources, the writer strengthens their arguments and establishes a solid foundation of scholarly discourse, thus showcasing their expertise in the field. In essence, proper referencing is a crucial element of academic writing, ensuring ethical practices, facilitating knowledge dissemination, and upholding the high standards of scholarly communication.
+<p>
+
+
+<p>
+<b>
+Which data set used for this Study?
+</b>
+<p>
+The data set used in this study was obtained from Kaggle and consists of a group of breast cancer patients who underwent surgical removal of their tumors. The data set has various variables, including the patient's  age, gender (Male/Female), and the expression levels of four proteins (Protein1, Protein2, Protein3, Protein4). Other variables include tumor stage (Tumour_Stage), histology (type of cancer), and surgery type (Lumpectomy, Simple Mastectomy, Modified Radical Mastectomy, Other). Patient_Status indicates whether the patient is alive or deceased, with some cases having null values when there is no available information about their post-surgery status.
+<p>
+
+
+<BR><B>
+<FONT SIZE = 4, COLOR = "#A11515">
+ANALYSIS
+</FONT>
+</B>
+<BR>
+
+<B>
+Task 1.1
+<p>
+Explain the research question?
+</B>
+<p>
+
+
+Research Question:
+<p>
+Is there a significant difference in the expression levels of Protein1 between patients who underwent Lumpectomy and patients who underwent Modified Radical Mastectomy?
+<p>
+The research question wants to find out if there is a noticeable difference in the levels of Protein1 between two groups of breast cancer patients: those who had Lumpectomy and those who had Modified Radical Mastectomy. Protein1 is a protein that researchers think might be important in breast cancer.
+<p>
+By analyzing the data and using statistical tests, we can find out if the difference in Protein1 levels between the two groups is statistically significant. The results will give us an idea of whether the type of surgery has an impact on Protein1 levels. It's important to note that this research question is specifically focused on Protein1 and the two surgical types mentioned, without considering other potential factors that may affect Protein1 levels or breast cancer outcomes.
+<p>
+
+
+
+<BR>
+<B>
+Task 1.2
+<p>
+Explain the variable collected
+</B>
+<p>
+The variables collected in the dataset, such as Protein1 expression levels and the type of surgery (Lumpectomy vs. Modified Radical Mastectomy), are directly relevant to answering the research question. Protein1 levels serve as the main focus, allowing us to compare its expression between the two surgical groups. The Surgery_type variable helps us categorize patients into specific groups for a direct comparison of Protein1 expression.
+<p>
+While other variables may also influence Protein1 levels and breast cancer outcomes, this research question specifically focuses on Protein1 and the two surgical procedure types. Therefore, the collected variables are tailored to address this specific research scope. Analyzing Protein1 expression levels within the context of surgery type will provide insights into the potential impact of the surgical procedure on Protein1 expression in breast cancer patients.
+<p>
+
+
+
+<BR>
+<B>
+Task 1.3
+<p>
+Display and visualize the data set 
+</B>
+<p>
+After the data import, I created a subset of the data to analyze the Protein1 levels for breast cancer patients who underwent Lumpectomy and Modified Radical Mastectomy procedures. The data was randomly sampled with 50 patients in each group, and two graphs were generated to visualize the distribution of Protein1 levels. `set.seed(567)` function is used. By setting this value, it ensures that the random sampling process will produce the same results each time the code is run. The sample() function was used to randomly select the patients without replacement (replace = FALSE), ensuring that each patient is included only once in the sample, preventing duplicates in the samples. Then the sampled Protein1 values for each surgery type were then stored in a data frame named protein_df.
+<p>
+ 
+<p>
+```{r task 1.3}
+set.seed(567)
+
+# Convert Protein1 column to numeric
+BRCA$Protein1 <- as.numeric(BRCA$Protein1)
+
+# Subset the Protein1 values for Lumpectomy and Modified Radical Mastectomy
+lumpectomy_data <- BRCA$Protein1[BRCA$Surgery_type == "Lumpectomy"]
+mastectomy_data <- BRCA$Protein1[BRCA$Surgery_type == "Modified Radical Mastectomy"]
+
+# Randomly select 50 patients from each group
+random_lumpectomy <- sample(lumpectomy_data, 50, replace = FALSE)
+random_mastectomy <- sample(mastectomy_data, 50, replace = FALSE)
+
+
+# Create the table data frame
+protein_df <- data.frame(
+ "Protein1 Lumpectomy" = random_lumpectomy,
+ "Protein1 Mastectomy" = random_mastectomy)
+
+# Rename the column names in protein_df
+colnames(protein_df) <- c("Protein1 Lumpectomy", "Protein1 Mastectomy")
+
+# Create the table using kable()
+kable(protein_df, caption = "Data for Lumpectomy and Mastectomy")%>%
+  kable_classic(full_width = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+# Generate two different graphs to visualize the numerical variables
+
+# Graph 1: Histogram
+ggplot(protein_df) +
+  aes(x = `Protein1 Lumpectomy`) +
+  geom_histogram(bins = 30L, fill = "#DA8938") +
+  labs(x = "Protein1 Lumpectomy",
+       y = "Count",
+       title = "Histogram of Protein1 by Lumpectomy") +
+  theme_classic()
+
+ggplot(protein_df) +
+aes(x = `Protein1 Mastectomy`) +
+  geom_histogram(bins = 30L, fill = "#60B0C9") +
+  labs(x = "Protein1 Mastectomy",
+       y = "Count",
+       title = "Histogram of Protein1 by Modified Radical Mastectomy") +
+  theme_classic()
+
+
+# Graph 2: Boxplot
+ggplot(BRCA, 
+       aes(x    = Surgery_type,
+           y    = Protein1, 
+           fill = Surgery_type)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Lumpectomy" = "#D2EB97", 
+                               "Modified Radical Mastectomy" = "#EBA297")) +
+  labs(x = "Surgery Type", 
+       y = "Protein1", 
+       title = "Boxplot of Protein1 by Surgery Type") +
+  theme_minimal()
+
+```
+
+
+<BR>
+<B>
+Observations:
+</B>
+<p>
+To visualy describe the Protein1 expression levels in the sample, I created histograms and box plots. The histograms provide a visual representation of the distribution of Protein1 expression levels for both the Lumpectomy and Modified Radical Mastectomy groups. The box plot shows the summary statistics, such as the median, quartiles, and any potential outliers, for each surgery type.
+<P>
+Histograms: 
+<p>
+The histograms displays the distribution of Protein1 levels for each surgical group. The histogram for Lumpectomy shows a roughly symmetrical distribution, with the majority of values concentrated around the range of -1 to 1. There are a few values that extend beyond this range. Similaryly, the histogram for  Mastectomy indicates similar distribution, with values mostly ranging from -1 to 1. There are some outliers that extend beyond this range.
+<p>
+Boxplot:
+<p>
+The boxplot for Protein1 levels in the Lumpectomy group shows a median value around 0.2. The boxplot's lower quartile (25th percentile) is approximately -0.25, while the upper quartile (75th percentile) is around 0.45. The interquartile range (IQR) is approximately 0.7, indicating a moderate spread of values.
+<p>
+The boxplot for Protein1 levels in the Mastectomy group reveals a median value near 0.1. The lower quartile is around -0.5, and the upper quartile is around 0.4. The IQR is roughly 0.9, suggesting a wider range of values compared to the Lumpectomy group.
+<p>
+In summary, the histogram and boxplot analysis suggest that the Protein1 levels in both the Lumpectomy and Mastectomy groups exhibit similar distributions, with values mostly centered around 0. There are some outliers in both groups, indicating a small number of patients with significantly higher or lower Protein1 levels. The boxplots demonstrate that the range of Protein1 levels is slightly wider in the Mastectomy group compared to the Lumpectomy group. However, a more detailed statistical analysis would be needed to determine if these differences are statistically significant.
+<p>
+
+
+
+<BR>
+<B>
+Task 1.4
+<p>
+Sampling method and summary calculation:
+</B>
+<p>
+A random sampling method was used to select patients who underwent 2 types of surgery. The process began by subsetting the dataset based on the Surgery_type column, creating separate subsets for patients who underwent Lumpectomy and those who underwent Modified Radical Mastectomy.
+<p>
+For the analysis, I calculated mean and standard deviation for the Protein1 expression levels in the randomly sampled Lumpectomy and Modified Radical Mastectomy groups.The values are presented in table using kable() function, combined with kable_classic() and kable_styling(). 
+
+```{r task 1.4}
+# Calculate mean and standard deviation for Lumpectomy group
+lumpectomy_mean <- round(mean(random_lumpectomy, na.rm = TRUE), 3)
+lumpectomy_sd <- round(sd(random_lumpectomy, na.rm = TRUE), 3)
+
+# Calculate mean and standard deviation for Modified Radical Mastectomy group
+mastectomy_mean <- round(mean(random_mastectomy, na.rm = TRUE), 3)
+mastectomy_sd <- round(sd(random_mastectomy, na.rm = TRUE), 3)
+
+# Create a table with mean and standard deviation values
+summary_table <- data.frame(
+  Surgery_Type = c("Lumpectomy", "Modified Mastectomy"),
+  Mean = c(lumpectomy_mean, mastectomy_mean),
+  Standard_Deviation = c(lumpectomy_sd, mastectomy_sd)
+)
+
+# Create the table using kable()
+kable(summary_table, caption = "Summary of Protein1 Expression Levels by Surgery Type") %>%
+  kable_classic(full_width = FALSE) %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+
+
+```
+<br>
+<B>
+Observations:
+</B>
+<p>
+The above table "Summary of Protein1 Expression Levels by Surgery Type" displays the mean and standard deviation. The mean represents the average Protein1 expression level within each surgery type group, while the standard deviation measures the variability or spread of the Protein1 expression levels within each group.
+<p>
+For the Lumpectomy group, the mean Protein1 expression level is 0.209 and for the Modified Radical Mastectomy group, the mean Protein1 expression level is -0.048.It means on average, patients who underwent Lumpectomy have a higher Protein1 expression level compared to patients who underwent Modified Radical Mastectomy. Overall, based on the mean and standard deviation values, it appears that patients who underwent Lumpectomy have, on average, higher Protein1 expression levels and a greater variability in expression levels compared to those who underwent Modified Radical Mastectomy.
+<p>
+
+
+
+<BR>
+<B>
+Task 1.5
+<p>
+Null and alternative Hypothesis:
+</B>
+<p>
+Null Hypothesis (H0): 
+<p>
+The mean expression levels of Protein1 are equal between patients who underwent Lumpectomy and patients who underwent Modified Radical Mastectomy.
+<p>
+H0: µ1 = µ2
+<p>
+Alternative Hypothesis (HA): The mean expression levels of Protein1 are not equal between patients who underwent Lumpectomy and patients who underwent Modified Radical Mastectomy.
+<p>
+HA: µ1 ≠ µ2
+<p>
+Well-presented hypothesis play a crucial role in scientific research as they provide a clear and structured framework for investigations. They help define the research question, guide the research process, and establish the significance of the study. Well-formulated hypotheses enable researchers to design appropriate research methods to collect data that directly addresses the research question (Blog, 2021). They also help in statistical analysis and interpretation of results, allowing researchers to draw valid conclusions and compare findings with existing knowledge. Overall, well-presented hypotheses enhance the research quality and get meaningful insights.
+<p>
+
+
+
+
+<BR>
+<B>
+Task 1.6
+<p>
+Why hypothesis test to choose?
+</B>
+<p>
+Based on the hypotheses presented, the study would require a two-tailed hypothesis test.
+<p>
+In a two-tailed hypothesis, we are testing for the possibility of a significant difference in both directions. In this case, we are testing whether there is a significant difference in the expression levels of Protein1 between patients who underwent Lumpectomy and patients who underwent Modified Radical Mastectomy. The alternative hypothesis (HA) states that there is a significant difference in the expression levels of Protein1 between patients, without specifying the direction of the difference. Therefore, a two-tailed test is appropriate to consider differences in both directions.
+<p>
+A right-tailed hypothesis would be used if we were specifically interested in testing whether the expression levels of Protein1 in patients who underwent Lumpectomy are significantly higher than those who underwent Modified Radical Mastectomy. Similarly, a left-tailed hypothesis would be used if we were interested in testing whether the expression levels of Protein1 in patients who underwent Lumpectomy are significantly lower.
+<p>
+The 95% confidence level is widely used in scientific research as it provides a balance between accepting a reasonable level of error (5%) and having a high level of confidence in the results(Majaski, 2023). It is common to use a significance level (α) of 0.05, which corresponds to a 95% confidence level. This means that if the p-value obtained from the hypothesis test is less than 0.05, we would reject the null hypothesis and conclude that there is a significant difference.
+<p>
+
+```{r task 1.6}
+cl      = 0.95
+alpha   = 1-cl
+alpha2  = alpha/2
+
+#Z-test (Critical values)
+cvl = qnorm(alpha2)
+
+cvr = qnorm(cl + alpha2)
+```
+<BR>
+The confidence level is ``r cl``
+<BR>
+The alpha is ``r alpha``
+<BR>
+The left critical value is ``r cvl``
+<BR>
+The left critical value is ``r cvr``
+<p>
+
+
+
+<BR>
+<B>
+Task 1.7
+<p>
+Normalize data and plot density distribution
+</B>
+<p>
+To analyze the density distribution of the normalized Protein1 values for the Lumpectomy group. The data is first normalized by subtracting the mean and dividing by the standard deviation.
+<p>
+The plot shows the density distribution of the normalized Protein1 values. The x-axis represents the normalized Protein1 values, and the y-axis represents the density of those values. The density curve provides information about the shape and spread of the data.
+<p>
+
+```{r task1.7, message=FALSE, warning=FALSE}
+# Calculate the mean and standard deviation for the sample
+sample_mean  <- mean(random_lumpectomy, na.rm = TRUE)
+sample_sd    <- sd(random_lumpectomy, na.rm = TRUE)
+
+# Normalize the sample data
+normalized_sample <- (random_lumpectomy - sample_mean) / sample_sd
+
+
+# Plot the density distribution of the normalized sample
+density_data <- density(normalized_sample)
+
+plot(density_data, main = "Density Distribution of Normalized Protein1 (Lumpectomy)",
+     xlab = "Normalized Protein1", 
+     ylab = "Density",
+      xlim = c(-4, 4))
+
+# Add lines for the critical values
+abline(v = cvl, col = "#C74242", lty = 2)
+abline(v = cvr, col = "#C74242", lty = 2)
+
+# Add labels for Confidence Level and Alpha areas
+text(mean(density_data$x), 0.2, paste("Confidence Level:", cl), pos = 3)
+text(cvl, 0.05, paste("CV:", round(cvl, 2)), pos = 4)
+text(cvr, 0.05, paste("CV:", round(cvr, 2)), pos = 2)
+text(cvl -1.5, 0.10, paste("Alpha:", alpha2), pos = 4)
+text(cvr +2, 0.10, paste("Alpha:", alpha2), pos = 2)
+
+
+```
+<br>
+<B>
+Observations:
+</B>
+<p>
+Based on the density distribution of the normalized Protein1 expression levels in the Lumpectomy group:
+<p>
+- The data distribution appears to be approximately symmetric, as the density curve is centered around the mean value of 0. This suggests that the majority of the patients have expression levels of Protein1 close to the average.
+<p>
+- The distribution is unimodal, indicating that there is a single peak in the data. This suggests that there is a predominant range of normalized Protein1 expression levels among the patients.
+<p>
+-The data distribution is relatively spread out, as indicated by the width of the density curve. This suggests that there is variability in the normalized Protein1 expression levels among the patients, with some individuals having higher or lower values compared to the mean.
+<p>
+
+
+<BR>
+<B>
+Task 1.8
+<p>
+Calculate test value:
+</B>
+<p>
+
+```{r task 1.8}
+# Values from the mean and SD table 
+mean1 = 0.096
+sd1   = 0.481
+n1    = 50  
+
+mean2 =  0.014
+sd2   =  0.526
+n2    =  1  
+
+# Calculate test value (z-test)
+z   =  (mean1 - mean2) / sqrt((sd1^2 / n1) + (sd2^2 / n2))
+
+```
+
+<BR>
+The Z-test value ``r z``
+<p>
+
+<p>
+To calculate the test value (z-test) for comparing the protein expression levels between two surgery types (Lumpectomy and Modified Radical Mastectomy), we can use the following formula:
+<p>
+z = (mean1 - mean2) / sqrt((sd1^2 / n1) + (sd2^2 / n2))
+<p>
+Where:
+<p>
+- mean1 and mean2 are the means of the protein expression levels for Lumpectomy and Modified Radical Mastectomy, respectively.
+<p>
+- sd1 and sd2 are the standard deviations of the protein expression levels for Lumpectomy and Modified Radical Mastectomy, respectively.
+<p>
+- n1 and n2 are the sample sizes for Lumpectomy and Modified Radical Mastectomy, respectively.
+<p>
+
+
+
+<BR>
+<B>
+Task 1.9
+<p>
+Reject or failed to reject null hypothesis?
+</B>
+<p>
+
+```{r task 1.9}
+cl      = 0.95
+alpha   = 1-cl
+alpha2  = alpha/2
+
+
+# Calculate the critical value for two-tailed test
+cv_l = qnorm (alpha2)
+
+cv_r = qnorm (alpha2 + cl)
+
+# Test whether the test statistic is greater than the critical value
+test_greater_than_cv = z > cv_r
+test_greater_than_cv
+
+# Test whether the test statistic is less than the critical value
+test_less_than_cv = z < cv_l
+test_less_than_cv
+
+# Print the results
+if (test_greater_than_cv) {
+  cat("The test statistic is greater than the critical value. Reject the null hypothesis.\n")
+} else if (test_less_than_cv) {
+  cat("The test statistic is less than the critical value. Reject the null hypothesis.\n")
+} else {
+  cat("The test statistic is within the range of the critical values. Fail to reject the null hypothesis.\n")
+}
+
+```
+<BR>
+The test_greater_than_cv is ``r test_greater_than_cv``
+<BR>
+The test_less_than_cv ``r test_less_than_cv``
+<p>
+
+<br>
+<B>
+Observations:
+</B>
+<p>
+Based on the results, the hypothesis testing analysis indicates that the null hypothesis cannot be rejected. The results show that both "test_greater_than_cv" and "test_less_than_cv" variables are set to FALSE, indicating that the test statistic is not greater than the critical value (cv_r) and not less than the critical value (cv_l). Therefore, the conclusion is that the test statistic is within the range of the critical values, leading to a failure to reject the null hypothesis.
+<p>
+In hypothesis testing, the null hypothesis is often a statement of no effect or no difference between groups. In this case, the failure to reject the null hypothesis suggests that there is not enough evidence to conclude that there is a significant difference between the two populations based on the given data and statistical analysis.
+<p>
+
+
+
+
+<BR>
+<B>
+Task 1.10
+<p>
+P value and its importance:
+</B>
+<p>
+P-value is the probability of obtaining results at least as extreme as the observed results of a statistical hypothesis test, assuming that the null hypothesis is correct (Beers, 2021). In hypothesis testing, the p-value is used to make decisions about whether to reject or fail to reject the null hypothesis.
+<p>
+In a two-tailed test, the p-value is calculated by finding the probability of observing a test statistic as extreme as the one calculated, in either tail of the distribution. This is done by doubling the probability of a single tail. The p-value represents the likelihood of observing the test statistic under the null hypothesis, and a smaller p-value indicates stronger evidence against the null hypothesis.
+<p>
+
+```{r task 1,10}
+# Calculate the critical value for two-tailed test
+p_value = 2*(1-pnorm(cv_r))
+
+```
+<BR>
+The P value is ``r p_value``
+<BR>
+<B>
+Observations:
+</B>
+<p>
+Since, p value is equal to alpha (0.05), t is a borderline case. It suggests that the observed data is on the edge of the critical region, where we would typically reject the null hypothesis. However, since the p-value is precisely equal to alpha, we do not have sufficient evidence to definitively reject the null hypothesis.
+<p>
+
+
+
+
+<BR>
+<B>
+Task 1.11
+<p>
+Plot test value on density plot:
+</B>
+<p>
+
+```{r task 1.11}
+# Adjust the plot margins
+par(mar = c(5, 4, 4, 2) + 0.1)
+
+# Plot the density distribution
+plot(density_data, main = "Density Distribution of Normalized Protein1 (Lumpectomy)",
+     xlab = "Normalized Protein1",
+     ylab = "Density",
+     xlim = c(-4, 4))
+
+# Add a vertical line for the test value
+abline(v = cv_l, col = "#A052DC", lwd = 2)
+
+# Add a vertical line for the critical value
+abline(v = cv_r, col = "#A052DC", lwd = 2)
+
+# Add a vertical line for the p-value
+abline(v = p_value, col = "#52DC72", lwd = 2)
+
+# Add a legend
+legend("topright", 
+       legend = c("Left Test Value", "Right Test Value", "P-Value"), 
+       col = c("#A052DC", "#A052DC", "#52DC72"), 
+       lwd = 2)
+
+# Add values of cv_l, cv_r, and p_value on the graph
+text(cv_l - 0.4, 0.1, paste(" ", round(cv_l, 2)), col = "#A052DC")
+text(cv_r + 0.2, 0.1, paste(" ", round(cv_r, 2)), col = "#A052DC")
+text(p_value,  +0.1, paste(" ", round(p_value, 2)), col = "#52DC72")
+
+
+```
+<br>
+<B>
+Observations:
+</B>
+<p>
+Based on the provided values, the Z-test value is 0.1546061.
+<p>
+Since the Z-test value is within the range of the critical values (-1.959964 to 1.959964), we fail to reject the null hypothesis.
+<p>
+In this case, the position of the Z-test value does match the answer to the question asked (TRUE). The Z-test value falls within the range of the critical values, indicating that the observed difference is not statistically significant at the given confidence level of 0.95. Therefore, we do not have sufficient evidence to reject the null hypothesis, which suggests that there is no significant difference between the two groups in terms of Protein1 expression levels.
+<p>
+
+
+
+<BR>
+<B>
+Task 1.12
+<p>
+Plot test value on density plot:
+</B>
+<p>
+Two density plot was plotted to compare the curves. Each group plot was plotted individually and later combined into one graph for easy comparison.
+<p>
+
+```{r task 1.12}
+# Combine the lumpectomy and mastectomy values into a single data frame
+random_samples_df <- data.frame(
+  Sample = c(rep("Protein1 Lumpectomy", length(random_lumpectomy)), 
+             rep("Protein1 Mastectomy", length(random_mastectomy))),
+  Value = c(random_lumpectomy, random_mastectomy)
+)
+
+
+# Create density plot for the lumpectomy sample
+plot_lumpectomy <- ggplot(data = random_samples_df[random_samples_df$Sample == "Protein1 Lumpectomy", ], 
+                          aes(x = Value, fill = "Protein1 Lumpectomy")) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Expression Levels", 
+       y = "Density", 
+       title = "Density Distribution of Protein1 Expression (Lumpectomy)") +
+  theme_minimal() +
+  xlim(-2.5, 2.5)
+
+
+# Create density plot for the mastectomy sample
+plot_mastectomy <- ggplot(data = random_samples_df[random_samples_df$Sample == "Protein1 Mastectomy", ], 
+                          aes(x = Value, fill = "Protein1 Mastectomy")) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Expression Levels", 
+       y = "Density", 
+       title = "Density Distribution of Protein1 Expression (Mastectomy)") +
+  theme_minimal() +
+  xlim(-2.5, 2.5)
+
+# Combine the density plots and add legend
+combined_plot <- plot_lumpectomy +
+  geom_density(data = random_samples_df[random_samples_df$Sample == "Protein1 Mastectomy", ], 
+               aes(x = Value, fill = "Protein1 Mastectomy"), alpha = 0.5) +
+  scale_fill_manual(values = c("#EEA5C9", "#D0EBF5"),
+                    labels = c("Protein1 Lumpectomy", "Protein1 Mastectomy")) +
+  labs(title = "Density Distribution of Protein1 Expression") +
+  theme(legend.position = "right")
+
+
+# Add vertical lines for the means of each sample
+combined_plot <- combined_plot +
+  geom_vline(aes(xintercept = `lumpectomy_mean`), color = "#2E55C1", linetype = "dashed") +
+  geom_vline(aes(xintercept = `mastectomy_mean`), color = "#F6163B", linetype = "dashed") +
+  geom_text(aes(x = `lumpectomy_mean`, y = 0, label = round(mean(random_lumpectomy, na.rm = TRUE), 3)),
+            vjust = - 1.5, hjust = -0.5, color = "#2E55C1") +
+  geom_text(aes(x = `mastectomy_mean`, y = 0, label = round(mean(random_mastectomy, na.rm = TRUE), 3)),
+            vjust = -1.5, hjust = 1.5, color = "#F6163B")
+
+# Display the combined plot with means
+combined_plot
+
+```
+<br>
+<B>
+Observations:
+</B>
+<p>
+From the shape of the graph we can observe that both groups has datas are concentrated around the range of -1 to 1. There are a few values that extend beyond this range. Similarly, the graph for  Mastectomy indicates similar distribution, with values mostly ranging from -1 to 1 but has little wider spread than the Lumpectomy. Pink graph represents the "Protein1 Lumpectomy" whereas light blue represents the "Protein1 Mastectomy".
+<p>
+The mean provides a measure of central tendency and gives insight into the average expression level within each surgery type. The mean Protein1 expression level for patients who underwent lumpectomy surgery is 0.209, while for patients who had modified mastectomy, it is -0.048. This suggests that, on average, patients who underwent lumpectomy had a relatively higher Protein1 expression level compared to those who had modified mastectomy.
+<p>
+S.D indicates the spread or variability of Protein1 expression levels within each surgery type. A higher standard deviation suggests a wider range of expression levels among patients. In this case, both lumpectomy and modified mastectomy groups show variability in Protein1 expression levels, indicating that individual patients may have diverse expressions.
+<p>
+
+
+
+
+<BR><B>
+<FONT SIZE = 4, COLOR = "#A11515">
+CONCLUSION
+</FONT>
+</B>
+<BR>
+In conclusion, the analysis of Protein1 expression levels in the Lumpectomy and Mastectomy groups revealed similar distributions with some variations. Both groups exhibited a concentration of values around 0, indicating a moderate expression level of Protein1. However, there were a few outliers in both groups, suggesting a subset of patients with significantly higher or lower Protein1 levels.
+<p>
+The box plots showed that the range of Protein1 levels was slightly wider in the Mastectomy group compared to the Lumpectomy group. This suggests that the surgical procedure may have some influence on Protein1 expression, although further investigation is needed to determine the significance of this difference.
+<p>
+Overall, these findings provide initial insights into the distribution and variability of Protein1 expression in breast cancer patients undergoing different surgical procedures. They highlight the need for additional research to better understand the relationship between Protein1 expression and surgical outcomes, as well as its potential implications for personalized treatment approaches in breast cancer.
+<p>
+
+
+
+<BR><B>
+<FONT SIZE = 4, COLOR = "#A11515">
+REFRENCES
+</FONT></B>
+<P>
+Beers, B. (2023, March 28). P-value: What it is, how to calculate it, and why it matters. Investopedia. https://www.investopedia.com/terms/p/p-value.aspLinks to an external site.
+<p>
+Bevans, R. (2023, June 22). Hypothesis testing: A step-by-step guide with easy examples. Scribbr. https://www.scribbr.com/statistics/hypothesis-testing/ 
+<p>
+Blog, F. (2021, September 17). Hypothesis testing: Definition, uses, Limitations + examples. Formplus. https://www.formpl.us/blog/hypothesis-testing#:~:text=Hypothesis%20testing%20allows%20the%20researcher,outcomes%20in%20any%20systematic%20investigation.
+<P>
+Bluman, A. G. (2012). Elementary Statistics: A Step by Step Approach (8th ed.). McGraw-Hill
+<P>
+Chiluiza, D. (2021, June). Introduction to analytics using R, R Studio and R Markdown Short manual series. RPubs. https://rpubs.com/Dee_Chiluiza/Home
+<P>
+Kaggle. (2021, August 5). Real breast cancer data. Kaggle. https://www.kaggle.com/datasets/amandam1/breastcancerdataset?resource=download 
+<p>
+Majaski, C. (2023, June 12). Hypothesis to be tested: Definition and 4 steps for testing with example. Investopedia. https://www.investopedia.com/terms/h/hypothesistesting.asp 
+<p>
+Meena, S. (2023, May 17). Difference between Z-test and T-test. Analytics Vidhya. https://www.analyticsvidhya.com/blog/2020/06/statistics-analytics-hypothesis-testing-z-test-t-test/ 
+
+
+
+<P>
+<BR><B>
+<FONT SIZE = 4, COLOR = "#A11515">
+BIBLIOGRAPHY
+</FONT>
+</B>
+<p>
+An R Markdown file has been attached to this report. The name of the file is project4_jarshana_shrestha
+
+
